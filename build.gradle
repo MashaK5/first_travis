@@ -1,0 +1,22 @@
+plugins {
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.junit.jupiter:junit-jupiter:5.4.2"
+}
+
+sourceSets.main.kotlin.srcDirs = ['src/main']
+sourceSets.test.kotlin.srcDirs = ['src/test']
+
+mainClassName = 'me.maria.VirtualMemoryKt'
+
+test {
+    useJUnitPlatform()
+}
