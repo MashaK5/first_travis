@@ -75,23 +75,24 @@ fun fifoAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     return sequenceOfAnswers
 }
 
-fun increasingAge(oldMemory: MutableMap<Int, FrameOfMemory>, newAppeal: Int): MutableMap<Int, FrameOfMemory> {
+fun increasingAge(oldMemory: MutableMap<Int, FrameOfMemory>): MutableMap<Int, FrameOfMemory> {
     val newMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
-    for ((age, frame) in oldMemory) {
+    for ((age, frameAndPage) in oldMemory) {
         val newAge = age + 1
-        newMemory[newAge] = frame
+        newMemory[newAge] = frameAndPage
     }
     oldMemory.clear()
     return newMemory
 }
 
-fun resettingAge(memory: MutableMap<Int, FrameOfMemory>, newAppeal: Int): MutableMap<Int, FrameOfMemory> {
-    var nullableAge: Int = -1
-    var nullableFrame: FrameOfMemory = FrameOfMemory(-1, -1)
-    for ((age, frame) in memory) {
-        if (frame.numberOfPage == newAppeal) {
+
+fun resettingAge(memory: MutableMap<Int, FrameOfMemory>, desiredPage: Int): MutableMap<Int, FrameOfMemory> {
+    var nullableAge = -1
+    var nullableFrame = FrameOfMemory(-1, -1)
+    for ((age, frameAndPage) in memory) {
+        if (frameAndPage.numberOfPage == desiredPage) {
             nullableAge = age
-            nullableFrame = frame
+            nullableFrame = frameAndPage
         }
     }
     memory[0] = nullableFrame
@@ -104,7 +105,7 @@ fun lruAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     var occupiedMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
 
     for (desiredPage in sequenceOfCalls) {
-        occupiedMemory = increasingAge(occupiedMemory, desiredPage)
+        occupiedMemory = increasingAge(occupiedMemory)
 
         if (occupiedMemory.map { it.value.numberOfPage }.contains(desiredPage)) {
             occupiedMemory = resettingAge(occupiedMemory, desiredPage)
@@ -129,10 +130,68 @@ fun lruAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     return sequenceOfAnswers
 }
 
-fun optAlgorithm(processSize: Int, memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
+fun reductionOfTimeToCall(oldMemory: MutableMap<Int, FrameOfMemory>): MutableMap<Int, FrameOfMemory> {
+    val newMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
+    for ((timeToCall, frameAndPage) in oldMemory) {
+        val newTimeToCall = timeToCall - 1
+        newMemory[newTimeToCall] = frameAndPage
+    }
+    oldMemory.clear()
+    return newMemory
+}
+
+fun installOfTimeToCall(memory: MutableMap<Int, FrameOfMemory>, desiredPage: Int, sequenceOfCalls: List<Int>, currentCall: Int): MutableMap<Int, FrameOfMemory> {
+    var mutableTimeToCall = sequenceOfCalls.size + 10
+    var mutableFrame = FrameOfMemory(sequenceOfCalls.size + 10, sequenceOfCalls.size + 10)
+    for ((timeToCall, frameAndPage) in memory) {
+        if (frameAndPage.numberOfPage == desiredPage) {
+            mutableTimeToCall = timeToCall
+            mutableFrame = frameAndPage
+        }
+    }
+    memory[newTimeToCall(sequenceOfCalls, currentCall, desiredPage)] = mutableFrame
+    memory.remove(mutableTimeToCall)
+    return memory
+}
+
+fun newTimeToCall(sequenceOfCalls: List<Int>, currentCall: Int, desiredPage: Int): Int {
+    val nextCall: Int = sequenceOfCalls.drop(currentCall + 1).indexOfFirst{it == desiredPage}
+    val timeToCall: Int
+    timeToCall = if (nextCall == -1) {
+        sequenceOfCalls.size + 10
+    } else {
+        nextCall + 1
+    }
+    return timeToCall
+}
+
+fun optAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     val sequenceOfAnswers: MutableList<String> = mutableListOf()
     var occupiedMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
 
+    for ((index, desiredPage) in sequenceOfCalls.withIndex()) {
+        occupiedMemory = reductionOfTimeToCall(occupiedMemory)
+
+        if (occupiedMemory.map { it.value.numberOfPage }.contains(desiredPage)) {
+            occupiedMemory = installOfTimeToCall(occupiedMemory, desiredPage, sequenceOfCalls, index)
+            sequenceOfAnswers.add("+")
+        }
+        else {
+            if (occupiedMemory.size < memorySize) {
+                val frame = occupiedMemory.size
+                occupiedMemory[newTimeToCall(sequenceOfCalls, index, desiredPage)] = FrameOfMemory(frame, desiredPage)
+                sequenceOfAnswers.add("${frame + 1}*")
+            }
+            else {
+                val maxTimeToCall: Int? = occupiedMemory.keys.toList().maxByOrNull { it }
+                val frame = occupiedMemory[maxTimeToCall]!!.numberOfFrame
+                occupiedMemory.remove(maxTimeToCall)
+                occupiedMemory[newTimeToCall(sequenceOfCalls, index, desiredPage)] = FrameOfMemory(frame, desiredPage)
+                sequenceOfAnswers.add("${frame + 1}")
+            }
+        }
+
+    }
     return sequenceOfAnswers
 }
 
@@ -143,6 +202,7 @@ fun main(args: Array<String>) {
             val (_, memorySize, sequenceOfCalls) = readFile(filename)
             println("This is the result of the algorithm FIFO: ${fifoAlgorithm(memorySize, sequenceOfCalls)}")
             println("This is the result of the algorithm LRU: ${lruAlgorithm(memorySize, sequenceOfCalls)}")
+            println("This is the result of the algorithm OPT: ${optAlgorithm(memorySize, sequenceOfCalls)}")
 
         } catch (e: Exception) {
             logFile.appendText("$filename:$e\n")
