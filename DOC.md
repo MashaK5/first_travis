@@ -2,7 +2,6 @@
 ### Example
 ````shell script
 $./gradlew run --args="file.txt"
-
 ````
 #### file.txt
 ````

@@ -13,26 +13,42 @@ class IncorrectFormat(message: String): Exception(message)
 data class FrameOfMemory(val numberOfFrame: Int, val numberOfPage: Int)
 
 
-fun readFile(filename: String): Triple<Int, Int, List<Int>> {
+fun readFile(filename: String): List<String> {
     val lines: List<String> = File(filename).readLines()
     if (lines.size > 3) {
         throw IncorrectFormat("Too many lines in file $filename")
     }
 
+    if (lines[0] == "") {
+        throw IncorrectFormat("Process address space size not specified in file $filename")
+    }
+    if (lines[1] == "") {
+        throw IncorrectFormat("RAM size not specified in file $filename")
+    }
+    if (lines[2] == "") {
+        throw IncorrectFormat("Sequence of requests not specified in file $filename")
+    }
+    return lines
+}
+
+fun dataProcessing(lines: List<String>): Pair<Int, List<Int>> {
     val processSize: Int = lines[0].toInt()  //N
-        ?: throw IncorrectFormat("Process address space size not specified in file $filename")
     val memorySize: Int = lines[1].toInt()   //M
-        ?: throw IncorrectFormat("RAM size not specified in file $filename")
     val calls: List<String> = lines[2].split(" ")
-        ?: throw IncorrectFormat("Sequence of requests not specified in file $filename")
 
     val sequenceOfCalls: MutableList<Int> = mutableListOf()
+    val ifTooBigCall = false
     for (call in calls) {
         if (call.toInt() <= processSize) {
-            sequenceOfCalls.add (call.toInt())   //подумать, что стоит выводить, что были недопустимые обращения
+            sequenceOfCalls.add (call.toInt())
+        }
+        else {
+            if (!ifTooBigCall) {
+                println("There were invalid calls in the call sequence.\nThese calls will be ignored.\n")
+            }
         }
     }
-    return Triple(processSize, memorySize, sequenceOfCalls)
+    return Pair(memorySize, sequenceOfCalls)
 }
 
 /**
@@ -75,6 +91,7 @@ fun fifoAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     return sequenceOfAnswers
 }
 
+
 fun increasingAge(oldMemory: MutableMap<Int, FrameOfMemory>): MutableMap<Int, FrameOfMemory> {
     val newMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
     for ((age, frameAndPage) in oldMemory) {
@@ -84,7 +101,6 @@ fun increasingAge(oldMemory: MutableMap<Int, FrameOfMemory>): MutableMap<Int, Fr
     oldMemory.clear()
     return newMemory
 }
-
 
 fun resettingAge(memory: MutableMap<Int, FrameOfMemory>, desiredPage: Int): MutableMap<Int, FrameOfMemory> {
     var nullableAge = -1
@@ -130,6 +146,7 @@ fun lruAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     return sequenceOfAnswers
 }
 
+
 fun reductionOfTimeToCall(oldMemory: MutableMap<Int, FrameOfMemory>): MutableMap<Int, FrameOfMemory> {
     val newMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
     for ((timeToCall, frameAndPage) in oldMemory) {
@@ -140,16 +157,16 @@ fun reductionOfTimeToCall(oldMemory: MutableMap<Int, FrameOfMemory>): MutableMap
     return newMemory
 }
 
-fun installOfTimeToCall(memory: MutableMap<Int, FrameOfMemory>, desiredPage: Int, sequenceOfCalls: List<Int>, currentCall: Int): MutableMap<Int, FrameOfMemory> {
-    var mutableTimeToCall = sequenceOfCalls.size + 10
-    var mutableFrame = FrameOfMemory(sequenceOfCalls.size + 10, sequenceOfCalls.size + 10)
+fun installOfTimeToCall(memory: MutableMap<Int, FrameOfMemory>, desiredPage: Int, calls: List<Int>, currentCall: Int): MutableMap<Int, FrameOfMemory> {
+    var mutableTimeToCall = calls.size + 10
+    var mutableFrame = FrameOfMemory(calls.size + 10, calls.size + 10)
     for ((timeToCall, frameAndPage) in memory) {
         if (frameAndPage.numberOfPage == desiredPage) {
             mutableTimeToCall = timeToCall
             mutableFrame = frameAndPage
         }
     }
-    memory[newTimeToCall(sequenceOfCalls, currentCall, desiredPage)] = mutableFrame
+    memory[newTimeToCall(calls, currentCall, desiredPage)] = mutableFrame
     memory.remove(mutableTimeToCall)
     return memory
 }
@@ -195,18 +212,50 @@ fun optAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     return sequenceOfAnswers
 }
 
+fun numberOfAnswersOfTheSecondType(resultOfAlgorithm: List<String>, nameOfAlgorithm: String): Pair<Int, String> {
+    val number = resultOfAlgorithm.filter { it != "+" }.size
+    return Pair(number, nameOfAlgorithm)
+}
+
+fun compareAlgorithms(resultFIFO: List<String>, resultLRU: List<String>, resultOPT: List<String>): MutableList<Pair<Int, String>> {
+    val fifo = numberOfAnswersOfTheSecondType(resultFIFO, "FIFO")
+    val lru  = numberOfAnswersOfTheSecondType(resultLRU, "LRU")
+    val opt  = numberOfAnswersOfTheSecondType(resultOPT, "OPT")
+    val sortingAlgorithms: MutableList<Pair<Int, String>> = mutableListOf(fifo, lru, opt)
+    sortingAlgorithms.sortBy { it.first }
+    return sortingAlgorithms
+}
+
+fun outputOnDisplay(fifo: List<String>, lru: List<String>, opt: List<String>) {
+    println("This is the result of the algorithm FIFO: $fifo")
+    println("This is the result of the algorithm LRU: $lru")
+    println("This is the result of the algorithm OPT: $opt")
+    println("")
+
+    println("Algorithms sorted by the number of answers of the second type:")
+    val sortingAlgorithms = compareAlgorithms(fifo, lru, opt)
+    sortingAlgorithms.forEach {
+        println("${it.second}: ${it.first}")
+    }
+    return
+}
+
 fun main(args: Array<String>) {
     val logFile = createLogFile()
     for (filename in args) {
         try {
-            val (_, memorySize, sequenceOfCalls) = readFile(filename)
-            println("This is the result of the algorithm FIFO: ${fifoAlgorithm(memorySize, sequenceOfCalls)}")
-            println("This is the result of the algorithm LRU: ${lruAlgorithm(memorySize, sequenceOfCalls)}")
-            println("This is the result of the algorithm OPT: ${optAlgorithm(memorySize, sequenceOfCalls)}")
+            val lines = readFile(filename)
+            val (memorySize, sequenceOfCalls) = dataProcessing(lines)
+
+            val fifo = fifoAlgorithm(memorySize, sequenceOfCalls)
+            val lru = lruAlgorithm(memorySize, sequenceOfCalls)
+            val opt = optAlgorithm(memorySize, sequenceOfCalls)
+
+            outputOnDisplay(fifo, lru, opt)
 
         } catch (e: Exception) {
             logFile.appendText("$filename:$e\n")
-            println("An error occurred while executing the file $filename: see error description in log")
+            println("Error occurred while executing the file $filename: see error description in log.")
         }
         println("")
     }
