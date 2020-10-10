@@ -56,7 +56,7 @@ fun dataProcessing(lines: List<String>): Pair<Int, List<Int>> {
      * If there are invalid calls, they are ignored and a warning is displayed.
      */
     val sequenceOfCalls: MutableList<Int> = mutableListOf()
-    val ifTooBigCall = false
+    var ifTooBigCall = false
     for (call in calls) {
         if (call.toInt() <= processSize) {
             sequenceOfCalls.add (call.toInt())
@@ -64,6 +64,7 @@ fun dataProcessing(lines: List<String>): Pair<Int, List<Int>> {
         else {
             if (!ifTooBigCall) {
                 println("There were invalid calls in the call sequence.\nThese calls will be ignored.\n")
+                ifTooBigCall = true
             }
         }
     }
@@ -322,6 +323,6 @@ fun main(args: Array<String>) {
             logFile.appendText("$filename:$e\n")
             println("Error occurred while executing the file $filename: see error description in log.")
         }
-        println("")
+        println("\n")
     }
 }
