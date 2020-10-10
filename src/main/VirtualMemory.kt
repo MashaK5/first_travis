@@ -6,13 +6,25 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**
+ * This program implements the work of algorithms for working with memory FIFO, LRU, OPT and compares their results.
+ * @param file.txt (or some files)
+ */
+
+/**
  * This class indicates that the file is not in the correct format.
  */
 class IncorrectFormat(message: String): Exception(message)
 
+/**
+ * This class stores information about which page is in the memory frame.
+ */
 data class FrameOfMemory(val numberOfFrame: Int, val numberOfPage: Int)
 
 
+/**
+ * This function reads data from the transferred file and checks the correctness of the file format.
+ *  @return correct data for algorithms
+ */
 fun readFile(filename: String): List<String> {
     val lines: List<String> = File(filename).readLines()
     if (lines.size > 3) {
@@ -31,11 +43,18 @@ fun readFile(filename: String): List<String> {
     return lines
 }
 
+/**
+ * This function processes data from the correct file and translates it into a convenient format.
+ */
 fun dataProcessing(lines: List<String>): Pair<Int, List<Int>> {
     val processSize: Int = lines[0].toInt()  //N
     val memorySize: Int = lines[1].toInt()   //M
     val calls: List<String> = lines[2].split(" ")
 
+    /**
+     * This loop checks to see if there are any references to nonexistent pages.
+     * If there are invalid calls, they are ignored and a warning is displayed.
+     */
     val sequenceOfCalls: MutableList<Int> = mutableListOf()
     val ifTooBigCall = false
     for (call in calls) {
@@ -66,6 +85,10 @@ fun createLogFile(): File {
     return logFile
 }
 
+/**
+ * This function implements the operation of the FIFO algorithm.
+ * @return sequence of answers of FIFO algorithm.
+ */
 fun fifoAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     val sequenceOfAnswers: MutableList<String> = mutableListOf()
     val occupiedMemory: Queue<FrameOfMemory> = LinkedList()
@@ -91,7 +114,9 @@ fun fifoAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     return sequenceOfAnswers
 }
 
-
+/**
+ * This function implements increasing the pages age in memory by 1 for the LRU algorithm.
+ */
 fun increasingAge(oldMemory: MutableMap<Int, FrameOfMemory>): MutableMap<Int, FrameOfMemory> {
     val newMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
     for ((age, frameAndPage) in oldMemory) {
@@ -102,6 +127,10 @@ fun increasingAge(oldMemory: MutableMap<Int, FrameOfMemory>): MutableMap<Int, Fr
     return newMemory
 }
 
+/**
+ * This function implements the resetting of the age of the function when called if it is already in memory
+ * for the LRU algorithm.
+ */
 fun resettingAge(memory: MutableMap<Int, FrameOfMemory>, desiredPage: Int): MutableMap<Int, FrameOfMemory> {
     var nullableAge = -1
     var nullableFrame = FrameOfMemory(-1, -1)
@@ -116,6 +145,11 @@ fun resettingAge(memory: MutableMap<Int, FrameOfMemory>, desiredPage: Int): Muta
     return memory
 }
 
+/**
+ * This function implements the operation of the LRU algorithm.
+ * @return sequence of answers of LRU algorithm.
+ * Uses functions [increasingAge], [resettingAge].
+ */
 fun lruAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     val sequenceOfAnswers: MutableList<String> = mutableListOf()
     var occupiedMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
@@ -146,7 +180,9 @@ fun lruAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     return sequenceOfAnswers
 }
 
-
+/**
+ * This function implements a decrease in the time to call pages in memory by 1 for the OPT algorithm.
+ */
 fun reductionOfTimeToCall(oldMemory: MutableMap<Int, FrameOfMemory>): MutableMap<Int, FrameOfMemory> {
     val newMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
     for ((timeToCall, frameAndPage) in oldMemory) {
@@ -157,9 +193,13 @@ fun reductionOfTimeToCall(oldMemory: MutableMap<Int, FrameOfMemory>): MutableMap
     return newMemory
 }
 
+/**
+ * This function sets a new time for the called page already in memory for the OPT algorithm.
+ * Uses the function [newTimeToCall].
+ */
 fun installOfTimeToCall(memory: MutableMap<Int, FrameOfMemory>, desiredPage: Int, calls: List<Int>, currentCall: Int): MutableMap<Int, FrameOfMemory> {
-    var mutableTimeToCall = calls.size + 10
-    var mutableFrame = FrameOfMemory(calls.size + 10, calls.size + 10)
+    var mutableTimeToCall = calls.size * 3
+    var mutableFrame = FrameOfMemory(calls.size * 3, calls.size * 3)
     for ((timeToCall, frameAndPage) in memory) {
         if (frameAndPage.numberOfPage == desiredPage) {
             mutableTimeToCall = timeToCall
@@ -171,17 +211,25 @@ fun installOfTimeToCall(memory: MutableMap<Int, FrameOfMemory>, desiredPage: Int
     return memory
 }
 
+/**
+ * This function calculates the time until the page is called for the OPT algorithm.
+ */
 fun newTimeToCall(sequenceOfCalls: List<Int>, currentCall: Int, desiredPage: Int): Int {
     val nextCall: Int = sequenceOfCalls.drop(currentCall + 1).indexOfFirst{it == desiredPage}
     val timeToCall: Int
     timeToCall = if (nextCall == -1) {
-        sequenceOfCalls.size + 10
+        sequenceOfCalls.size * 3
     } else {
         nextCall + 1
     }
     return timeToCall
 }
 
+/**
+ * This function implements the operation of the OPT algorithm.
+ * @return sequence of answers of OPT algorithm.
+ * Uses functions [reductionOfTimeToCall], [installOfTimeToCall], [newTimeToCall].
+ */
 fun optAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     val sequenceOfAnswers: MutableList<String> = mutableListOf()
     var occupiedMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
@@ -212,20 +260,30 @@ fun optAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     return sequenceOfAnswers
 }
 
+/**
+ * This function counts the number of responses of the second type for the algorithm.
+ */
 fun numberOfAnswersOfTheSecondType(resultOfAlgorithm: List<String>, nameOfAlgorithm: String): Pair<Int, String> {
     val number = resultOfAlgorithm.filter { it != "+" }.size
     return Pair(number, nameOfAlgorithm)
 }
 
-fun compareAlgorithms(resultFIFO: List<String>, resultLRU: List<String>, resultOPT: List<String>): MutableList<Pair<Int, String>> {
+/**
+ * This function sorts the algorithms by the number of responses of the second type.
+ * Uses the function [numberOfAnswersOfTheSecondType].
+ */
+fun sortAlgorithms(resultFIFO: List<String>, resultLRU: List<String>, resultOPT: List<String>): MutableList<Pair<Int, String>> {
     val fifo = numberOfAnswersOfTheSecondType(resultFIFO, "FIFO")
     val lru  = numberOfAnswersOfTheSecondType(resultLRU, "LRU")
     val opt  = numberOfAnswersOfTheSecondType(resultOPT, "OPT")
-    val sortingAlgorithms: MutableList<Pair<Int, String>> = mutableListOf(fifo, lru, opt)
-    sortingAlgorithms.sortBy { it.first }
-    return sortingAlgorithms
+    val sortedAlgorithms: MutableList<Pair<Int, String>> = mutableListOf(fifo, lru, opt)
+    sortedAlgorithms.sortBy { it.first }
+    return sortedAlgorithms
 }
 
+/**
+ * This function displays the results of the algorithms and compares their results.
+ */
 fun outputOnDisplay(fifo: List<String>, lru: List<String>, opt: List<String>) {
     println("This is the result of the algorithm FIFO: $fifo")
     println("This is the result of the algorithm LRU: $lru")
@@ -233,8 +291,8 @@ fun outputOnDisplay(fifo: List<String>, lru: List<String>, opt: List<String>) {
     println("")
 
     println("Algorithms sorted by the number of answers of the second type:")
-    val sortingAlgorithms = compareAlgorithms(fifo, lru, opt)
-    sortingAlgorithms.forEach {
+    val sortedAlgorithms = sortAlgorithms(fifo, lru, opt)
+    sortedAlgorithms.forEach {
         println("${it.second}: ${it.first}")
     }
     return
@@ -254,6 +312,9 @@ fun main(args: Array<String>) {
             outputOnDisplay(fifo, lru, opt)
 
         } catch (e: Exception) {
+            /**
+             * This block prints an error message to the screen and writes a description of the error to log.
+             */
             logFile.appendText("$filename:$e\n")
             println("Error occurred while executing the file $filename: see error description in log.")
         }
