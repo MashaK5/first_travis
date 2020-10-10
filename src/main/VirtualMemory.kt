@@ -298,6 +298,10 @@ fun outputOnDisplay(fifo: List<String>, lru: List<String>, opt: List<String>) {
     return
 }
 
+/**
+ * This function implements the work of the program.
+ * @param files
+ */
 fun main(args: Array<String>) {
     val logFile = createLogFile()
     for (filename in args) {
