@@ -7,7 +7,6 @@ import java.util.*
 
 /**
  * This program implements the work of algorithms for working with memory FIFO, LRU, OPT and compares their results.
- * @param file.txt (or some files)
  */
 
 /**
@@ -94,6 +93,10 @@ fun fifoAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     val sequenceOfAnswers: MutableList<String> = mutableListOf()
     val occupiedMemory: Queue<FrameOfMemory> = LinkedList()
 
+    if (memorySize == 0) {
+        return sequenceOfAnswers
+    }
+
     for (desiredPage in sequenceOfCalls) {
         if (occupiedMemory.map { it.numberOfPage }.contains(desiredPage)) {
             sequenceOfAnswers.add("+")
@@ -154,6 +157,10 @@ fun resettingAge(memory: MutableMap<Int, FrameOfMemory>, desiredPage: Int): Muta
 fun lruAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     val sequenceOfAnswers: MutableList<String> = mutableListOf()
     var occupiedMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
+
+    if (memorySize == 0) {
+        return sequenceOfAnswers
+    }
 
     for (desiredPage in sequenceOfCalls) {
         occupiedMemory = increasingAge(occupiedMemory)
@@ -235,6 +242,10 @@ fun optAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     val sequenceOfAnswers: MutableList<String> = mutableListOf()
     var occupiedMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
 
+    if (memorySize == 0) {
+        return sequenceOfAnswers
+    }
+
     for ((index, desiredPage) in sequenceOfCalls.withIndex()) {
         occupiedMemory = reductionOfTimeToCall(occupiedMemory)
 
@@ -301,7 +312,6 @@ fun outputOnDisplay(fifo: List<String>, lru: List<String>, opt: List<String>) {
 
 /**
  * This function implements the work of the program.
- * @param files
  */
 fun main(args: Array<String>) {
     val logFile = createLogFile()
