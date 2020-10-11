@@ -52,9 +52,62 @@ LRU: 7
 
 
 ````
-#### file.txt
+##### file.txt
 ````
 10
 3
 22 4 8 7 1 1 2 7 4 10
+````
+
+###Answers for integration tests
+example1.txt (incorrect format: RAM size not specified):
+````shell script
+Error occurred while executing the file data/example1.txt: see error description in log.
+````
+
+example2.txt (incorrect format):
+````shell script
+Error occurred while executing the file data/example2.txt: see error description in log.
+````
+
+example3.txt (incorrect format: too many lines):
+````shell script
+Error occurred while executing the file data/example3.txt: see error description in log.
+````
+
+example4.txt (small example):
+````shell script
+This is the result of the algorithm FIFO: [1*, +, 1, 1, 1, 1]
+This is the result of the algorithm LRU: [1*, +, 1, 1, 1, 1]
+This is the result of the algorithm OPT: [1*, +, 1, 1, 1, 1]
+
+Algorithms sorted by the number of answers of the second type:
+FIFO: 5
+LRU: 5
+OPT: 5
+````
+example5.txt (big example):
+````shell script
+This is the result of the algorithm FIFO: [1*, +, 2*, 3*, 1, 2, +, 3, 1, 2]
+This is the result of the algorithm LRU: [1*, +, 2*, 3*, 1, 2, +, 1, +, 2]
+This is the result of the algorithm OPT: [1*, +, 2*, 3*, 1, 1, +, +, +, 3]
+
+Algorithms sorted by the number of answers of the second type:
+OPT: 6
+LRU: 7
+FIFO: 8
+````
+example6.txt (with invalid calls):
+````shell script
+There were invalid calls in the call sequence.
+These calls will be ignored.
+
+This is the result of the algorithm FIFO: [1*, 2*, 3*, 1, 2, 3, 1, 2, 3, 1, 2, +]
+This is the result of the algorithm LRU: [1*, 2*, 3*, 1, 2, 3, 1, 2, 3, 1, 2, +]
+This is the result of the algorithm OPT: [1*, 2*, 3*, 2, 2, +, +, 1, 1, 2, +, +]
+
+Algorithms sorted by the number of answers of the second type:
+OPT: 8
+FIFO: 11
+LRU: 11
 ````
