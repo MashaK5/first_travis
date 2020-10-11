@@ -19,7 +19,12 @@ The results of the program are displayed on the screen.
     * the error description is written to the log
 2. The file is in the correct format:
     * the result of each algorithm is displayed
-        >This is the result of the algorithm ... : ...
+        >This is the result of the algorithm ... : [...]
+        * if a free frame is replaced, then the answer is the frame number with * 
+        * if an already filled frame is replaced, then the answer is the frame number
+        * if the page is already in memory, then the answer is +  
+        
+        P.s. this output is arranged for the convenience of the user.                                          
     * the result of the comparison is displayed
         >Algorithms sorted by the number of answers of the second type: ...
 3. Among the calls there are inadmissible:
