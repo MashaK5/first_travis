@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+
 /**
  * This program implements the work of algorithms for working with memory FIFO, LRU, OPT and compares their results.
  */
@@ -24,7 +25,7 @@ data class FrameOfMemory(val numberOfFrame: Int, val numberOfPage: Int)
  * This function reads data from file, checks the correctness of its format and converts it to a convenient format.
  *  @return correct data for algorithms
  */
-fun readFile(filename: String): Pair<Int, List<Int>> {
+fun readFile(filename: String, output: MutableList<String>): Pair<Int, List<Int>> {
     val lines: List<String> = File(filename).readLines()
     if (lines.size != 3) {
         throw IncorrectFormat("Expected exactly 3 lines in file $filename")
@@ -52,7 +53,7 @@ fun readFile(filename: String): Pair<Int, List<Int>> {
 
     when (sequenceOfCalls.size) {
         0 -> throw IncorrectFormat("Sequence of requests has not valid calls in line 3 in file $filename. Sequence of natural number is expected.")
-        in 1 until calls.size -> println("There were invalid calls in the call sequence. These calls will be ignored.\n")
+        in 1 until calls.size -> output.add("There were invalid calls in the call sequence. These calls will be ignored.\n")
     }
 
     return Pair(memorySize, sequenceOfCalls)
@@ -271,49 +272,61 @@ fun sortAlgorithms(resultFIFO: List<String>, resultLRU: List<String>, resultOPT:
 }
 
 /**
- * This function displays the results of the algorithms and compares their results.
+ * This function writes to output file the results of the algorithms and compares their results.
  */
-fun outputOnDisplay(fifo: List<String>, lru: List<String>, opt: List<String>) {
-    println("This is the result of the algorithm FIFO: $fifo")
-    println("This is the result of the algorithm LRU: $lru")
-    println("This is the result of the algorithm OPT: $opt")
-    println("")
+fun outputOnDisplay(fifo: List<String>, lru: List<String>, opt: List<String>, output: MutableList<String>) {
+    output.add("This is the result of the algorithm FIFO: $fifo")
+    output.add("This is the result of the algorithm LRU: $lru")
+    output.add("This is the result of the algorithm OPT: $opt")
+    output.add("")
 
-    println("Algorithms sorted by the number of answers of the second type:")
+    output.add("Algorithms sorted by the number of answers of the second type:")
     val sortedAlgorithms = sortAlgorithms(fifo, lru, opt)
     sortedAlgorithms.forEach {
-        println("${it.second}: ${it.first}")
+        output.add("${it.second}: ${it.first}")
     }
-    return
 }
 
 /**
  * This function implements the work of the program.
  */
 fun main(args: Array<String>) {
+
+    val output = mutableListOf<String>()
+    val logFile = createLogFile()
+    File("output.txt").delete()
+
     if (args.isEmpty()) {
-        println ("No files are listed!")
+        output.add("No files are listed!")
     }
 
-    val logFile = createLogFile()
     for (filename in args) {
         try {
-            println("File $filename processing result:")
-            val (memorySize, sequenceOfCalls) = readFile(filename)
+            output.add("File $filename processing result:")
+            val (memorySize, sequenceOfCalls) = readFile(filename, output)
 
             val fifo = fifoAlgorithm(memorySize, sequenceOfCalls)
             val lru = lruAlgorithm(memorySize, sequenceOfCalls)
             val opt = optAlgorithm(memorySize, sequenceOfCalls)
 
-            outputOnDisplay(fifo, lru, opt)
+            outputOnDisplay(fifo, lru, opt, output)
 
         } catch (e: Exception) {
             /**
              * This block prints an error message to the screen and writes a description of the error to log.
              */
             logFile.appendText("$filename:$e\n")
-            println("$e")
+            output.add("$e")
         }
-        println("\n")
+        output.add("")
+        output.add("")
+    }
+
+    /**
+     * This function displays the result of program's work and writes it in output.txt
+     */
+    for (line in output) {
+        println("$line")
+        File("output.txt").appendText("$line\n")
     }
 }

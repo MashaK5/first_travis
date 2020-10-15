@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="integTest.VirtualMemoryKtIntegTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2020-10-15T23:54:53" hostname="maria-TM1701" time="0.071">
+  <properties/>
+  <testcase name="big example()" classname="integTest.VirtualMemoryKtIntegTest" time="0.044"/>
+  <testcase name="with some invalid calls()" classname="integTest.VirtualMemoryKtIntegTest" time="0.002"/>
+  <testcase name="incorrect format of RAM size()" classname="integTest.VirtualMemoryKtIntegTest" time="0.001"/>
+  <testcase name="incorrect number of lines()" classname="integTest.VirtualMemoryKtIntegTest" time="0.001"/>
+  <testcase name="small example()" classname="integTest.VirtualMemoryKtIntegTest" time="0.002"/>
+  <testcase name="only invalid calls()" classname="integTest.VirtualMemoryKtIntegTest" time="0.001"/>
+  <testcase name="not existing file()" classname="integTest.VirtualMemoryKtIntegTest" time="0.01"/>
+  <testcase name="some files()" classname="integTest.VirtualMemoryKtIntegTest" time="0.004"/>
+  <testcase name="incorrect format of address space()" classname="integTest.VirtualMemoryKtIntegTest" time="0.001"/>
+  <system-out><![CDATA[File data/example5.txt processing result:
+There were invalid calls in the call sequence. These calls will be ignored.
+
+This is the result of the algorithm FIFO: [1*, +, 2*, 3*, 1, 2, +, 3, 1]
+This is the result of the algorithm LRU: [1*, +, 2*, 3*, 1, 2, +, 1, +]
+This is the result of the algorithm OPT: [1*, +, 2*, 3*, 1, 1, +, +, +]
+
+Algorithms sorted by the number of answers of the second type:
+OPT: 5
+LRU: 6
+FIFO: 7
+
+
+File data/example6.txt processing result:
+There were invalid calls in the call sequence. These calls will be ignored.
+
+This is the result of the algorithm FIFO: [1*, 2*, 3*, 1, 2, 3, 1, 2]
+This is the result of the algorithm LRU: [1*, 2*, 3*, 1, 2, 3, 1, 2]
+This is the result of the algorithm OPT: [1*, 2*, 3*, 3, +, +, 2, 2]
+
+Algorithms sorted by the number of answers of the second type:
+OPT: 6
+FIFO: 8
+LRU: 8
+
+
+File data/example1.txt processing result:
+me.maria.IncorrectFormat: RAM size is not in the correct format in line 2 in file data/example1.txt. Natural number is expected.
+
+
+File data/example3.txt processing result:
+me.maria.IncorrectFormat: Expected exactly 3 lines in file data/example3.txt
+
+
+File data/example4.txt processing result:
+This is the result of the algorithm FIFO: [1*, +, 1, 1, 1, 1]
+This is the result of the algorithm LRU: [1*, +, 1, 1, 1, 1]
+This is the result of the algorithm OPT: [1*, +, 1, 1, 1, 1]
+
+Algorithms sorted by the number of answers of the second type:
+FIFO: 5
+LRU: 5
+OPT: 5
+
+
+File data/example7.txt processing result:
+me.maria.IncorrectFormat: Sequence of requests has not valid calls in line 3 in file data/example7.txt. Sequence of natural number is expected.
+
+
+File dddd processing result:
+java.io.FileNotFoundException: dddd (Нет такого файла или каталога)
+
+
+File data/example1.txt processing result:
+me.maria.IncorrectFormat: RAM size is not in the correct format in line 2 in file data/example1.txt. Natural number is expected.
+
+
+File data/example4.txt processing result:
+This is the result of the algorithm FIFO: [1*, +, 1, 1, 1, 1]
+This is the result of the algorithm LRU: [1*, +, 1, 1, 1, 1]
+This is the result of the algorithm OPT: [1*, +, 1, 1, 1, 1]
+
+Algorithms sorted by the number of answers of the second type:
+FIFO: 5
+LRU: 5
+OPT: 5
+
+
+File data/example6.txt processing result:
+There were invalid calls in the call sequence. These calls will be ignored.
+
+This is the result of the algorithm FIFO: [1*, 2*, 3*, 1, 2, 3, 1, 2]
+This is the result of the algorithm LRU: [1*, 2*, 3*, 1, 2, 3, 1, 2]
+This is the result of the algorithm OPT: [1*, 2*, 3*, 3, +, +, 2, 2]
+
+Algorithms sorted by the number of answers of the second type:
+OPT: 6
+FIFO: 8
+LRU: 8
+
+
+File xxxxxx processing result:
+java.io.FileNotFoundException: xxxxxx (Нет такого файла или каталога)
+
+
+File data/example2.txt processing result:
+me.maria.IncorrectFormat: Process address space size is not in the correct format in line 1 in file data/example2.txt. Natural number is expected.
+
+
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

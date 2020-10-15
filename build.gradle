@@ -26,7 +26,7 @@ sourceSets {
         compileClasspath += sourceSets.main.output
         runtimeClasspath += sourceSets.main.output
         java {
-            srcDirs = ['src/integTest']  // Здесь должна быть указана директория, в которую вы запихнете интеграц тесты - они пишутся точно также как обычные (можно прям взять обычный и скопипастить сюда)
+            srcDirs = ['src/integTest']
         }
     }
 }

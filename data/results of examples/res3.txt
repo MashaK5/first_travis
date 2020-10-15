@@ -1,0 +1,4 @@
+File data/example3.txt processing result:
+me.maria.IncorrectFormat: Expected exactly 3 lines in file data/example3.txt
+
+

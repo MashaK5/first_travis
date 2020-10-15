@@ -1,0 +1,4 @@
+File data/example7.txt processing result:
+me.maria.IncorrectFormat: Sequence of requests has not valid calls in line 3 in file data/example7.txt. Sequence of natural number is expected.
+
+

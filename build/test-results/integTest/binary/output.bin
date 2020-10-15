@@ -1,0 +1,93 @@
+*File data/example5.txt processing result:
+LThere were invalid calls in the call sequence. These calls will be ignored.
+
+IThis is the result of the algorithm FIFO: [1*, +, 2*, 3*, 1, 2, +, 3, 1]
+HThis is the result of the algorithm LRU: [1*, +, 2*, 3*, 1, 2, +, 1, +]
+HThis is the result of the algorithm OPT: [1*, +, 2*, 3*, 1, 1, +, +, +]
+
+?Algorithms sorted by the number of answers of the second type:
+OPT: 5
+LRU: 6
+FIFO: 7
+
+
+*File data/example6.txt processing result:
+LThere were invalid calls in the call sequence. These calls will be ignored.
+
+FThis is the result of the algorithm FIFO: [1*, 2*, 3*, 1, 2, 3, 1, 2]
+EThis is the result of the algorithm LRU: [1*, 2*, 3*, 1, 2, 3, 1, 2]
+EThis is the result of the algorithm OPT: [1*, 2*, 3*, 3, +, +, 2, 2]
+
+?Algorithms sorted by the number of answers of the second type:
+OPT: 6
+FIFO: 8
+LRU: 8
+
+
+*File data/example1.txt processing result:
+�me.maria.IncorrectFormat: RAM size is not in the correct format in line 2 in file data/example1.txt. Natural number is expected.
+
+
+*File data/example3.txt processing result:
+Mme.maria.IncorrectFormat: Expected exactly 3 lines in file data/example3.txt
+
+
+*File data/example4.txt processing result:
+>This is the result of the algorithm FIFO: [1*, +, 1, 1, 1, 1]
+=This is the result of the algorithm LRU: [1*, +, 1, 1, 1, 1]
+=This is the result of the algorithm OPT: [1*, +, 1, 1, 1, 1]
+
+?Algorithms sorted by the number of answers of the second type:
+FIFO: 5
+LRU: 5
+OPT: 5
+
+
+*File data/example7.txt processing result:
+�me.maria.IncorrectFormat: Sequence of requests has not valid calls in line 3 in file data/example7.txt. Sequence of natural number is expected.
+
+
+File dddd processing result:
+]java.io.FileNotFoundException: dddd (Нет такого файла или каталога)
+
+
+	*File data/example1.txt processing result:
+	�me.maria.IncorrectFormat: RAM size is not in the correct format in line 2 in file data/example1.txt. Natural number is expected.
+	
+	
+	*File data/example4.txt processing result:
+	>This is the result of the algorithm FIFO: [1*, +, 1, 1, 1, 1]
+	=This is the result of the algorithm LRU: [1*, +, 1, 1, 1, 1]
+	=This is the result of the algorithm OPT: [1*, +, 1, 1, 1, 1]
+	
+	?Algorithms sorted by the number of answers of the second type:
+	FIFO: 5
+	LRU: 5
+	OPT: 5
+	
+	
+	*File data/example6.txt processing result:
+	LThere were invalid calls in the call sequence. These calls will be ignored.
+	
+	FThis is the result of the algorithm FIFO: [1*, 2*, 3*, 1, 2, 3, 1, 2]
+	EThis is the result of the algorithm LRU: [1*, 2*, 3*, 1, 2, 3, 1, 2]
+	EThis is the result of the algorithm OPT: [1*, 2*, 3*, 3, +, +, 2, 2]
+	
+	?Algorithms sorted by the number of answers of the second type:
+	OPT: 6
+	FIFO: 8
+	LRU: 8
+	
+	
+	File xxxxxx processing result:
+	_java.io.FileNotFoundException: xxxxxx (Нет такого файла или каталога)
+	
+	
+
+*File data/example2.txt processing result:
+
+�me.maria.IncorrectFormat: Process address space size is not in the correct format in line 1 in file data/example2.txt. Natural number is expected.
+
+
+
+

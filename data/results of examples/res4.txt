@@ -1,0 +1,11 @@
+File data/example4.txt processing result:
+This is the result of the algorithm FIFO: [1*, +, 1, 1, 1, 1]
+This is the result of the algorithm LRU: [1*, +, 1, 1, 1, 1]
+This is the result of the algorithm OPT: [1*, +, 1, 1, 1, 1]
+
+Algorithms sorted by the number of answers of the second type:
+FIFO: 5
+LRU: 5
+OPT: 5
+
+
