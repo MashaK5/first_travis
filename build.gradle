@@ -7,16 +7,40 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    integTestImplementation.extendsFrom implementation
+    integTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation "org.junit.jupiter:junit-jupiter:5.4.2"
+    integTestImplementation "org.jetbrains.kotlin:kotlin-test:1.4.10"
 }
 
 sourceSets.main.kotlin.srcDirs = ['src/main']
 sourceSets.test.kotlin.srcDirs = ['src/test']
+sourceSets {
+    integTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+        java {
+            srcDirs = ['src/integTest']  // Здесь должна быть указана директория, в которую вы запихнете интеграц тесты - они пишутся точно также как обычные (можно прям взять обычный и скопипастить сюда)
+        }
+    }
+}
 
 mainClassName = 'me.maria.VirtualMemoryKt'
 
 test {
     useJUnitPlatform()
 }
+
+task integTest(type: Test){
+    testClassesDirs = sourceSets.integTest.output.classesDirs
+    classpath = sourceSets.integTest.runtimeClasspath
+    useJUnitPlatform()
+}
+
+check.dependsOn integTest

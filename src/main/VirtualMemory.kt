@@ -52,7 +52,7 @@ fun readFile(filename: String): Pair<Int, List<Int>> {
 
     when (sequenceOfCalls.size) {
         0 -> throw IncorrectFormat("Sequence of requests has not valid calls in line 3 in file $filename. Sequence of natural number is expected.")
-        in 1 until calls.size -> println("There were invalid calls in the call sequence. These calls will be ignored.")
+        in 1 until calls.size -> println("There were invalid calls in the call sequence. These calls will be ignored.\n")
     }
 
     return Pair(memorySize, sequenceOfCalls)
