@@ -3,36 +3,9 @@ package tests
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import me.maria.*
-import org.junit.jupiter.api.assertThrows
-
-internal class DataProcessingTest {
-
-    @Test
-    fun withInvalidCalls() {
-        val lines: List<String> = listOf("10", "3", "2 3 11 1 9")
-        val expected = Pair(3, mutableListOf(2, 3, 1, 9))
-        val actual = dataProcessing(lines)
-        assertEquals(expected, actual)
-    }
-
-    @Test
-    fun withoutInvalidCalls() {
-        val lines: List<String> = listOf("10", "3", "2 4 7 1 9")
-        val expected = Pair(3, mutableListOf(2, 4, 7, 1, 9))
-        val actual = dataProcessing(lines)
-        assertEquals(expected, actual)
-    }
-}
 
 
 internal class FifoAlgorithm {
-
-    @Test
-    fun zeroSize() {
-        val expected = listOf<String>()
-        val actual = fifoAlgorithm(0, listOf(2, 4, 5, 1))
-        assertEquals(expected, actual)
-    }
 
     @Test
     fun oneFrame() {
@@ -82,13 +55,6 @@ internal class ResettingAge {
 
 
 internal class LruAlgorithm {
-
-    @Test
-    fun zeroSize() {
-        val expected = listOf<String>()
-        val actual = lruAlgorithm(0, listOf(2, 4, 5, 1))
-        assertEquals(expected, actual)
-    }
 
     @Test
     fun oneFrame() {
@@ -159,13 +125,6 @@ internal class NewTimeToCall {
 
 
 internal class OptAlgorithm {
-
-    @Test
-    fun zeroSize() {
-        val expected = listOf<String>()
-        val actual = optAlgorithm(0, listOf(2, 4, 5, 1))
-        assertEquals(expected, actual)
-    }
 
     @Test
     fun oneFrame() {

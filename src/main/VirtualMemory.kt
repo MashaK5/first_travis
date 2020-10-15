@@ -21,52 +21,40 @@ data class FrameOfMemory(val numberOfFrame: Int, val numberOfPage: Int)
 
 
 /**
- * This function reads data from the transferred file and checks the correctness of the file format.
+ * This function reads data from file, checks the correctness of its format and converts it to a convenient format.
  *  @return correct data for algorithms
  */
-fun readFile(filename: String): List<String> {
+fun readFile(filename: String): Pair<Int, List<Int>> {
     val lines: List<String> = File(filename).readLines()
-    if (lines.size > 3) {
-        throw IncorrectFormat("Too many lines in file $filename")
+    if (lines.size != 3) {
+        throw IncorrectFormat("Expected exactly 3 lines in file $filename")
     }
 
-    if (lines[0] == "") {
-        throw IncorrectFormat("Process address space size not specified in file $filename")
+    val processSize: Int = lines[0].toIntOrNull()
+            ?: throw IncorrectFormat("Process address space size is not in the correct format in line 1 in file $filename. Natural number is expected.")
+    if (processSize < 1) {
+        throw IncorrectFormat("Process address space size cannot be less than 1. Natural number is expected.")
     }
-    if (lines[1] == "") {
-        throw IncorrectFormat("RAM size not specified in file $filename")
-    }
-    if (lines[2] == "") {
-        throw IncorrectFormat("Sequence of requests not specified in file $filename")
-    }
-    return lines
-}
 
-/**
- * This function processes data from the correct file and translates it into a convenient format.
- */
-fun dataProcessing(lines: List<String>): Pair<Int, List<Int>> {
-    val processSize: Int = lines[0].toInt()  //N
-    val memorySize: Int = lines[1].toInt()   //M
-    val calls: List<String> = lines[2].split(" ")
+    val memorySize: Int = lines[1].toIntOrNull()
+            ?: throw IncorrectFormat("RAM size is not in the correct format in line 2 in file $filename. Natural number is expected.")
+    if (memorySize < 1) {
+        throw IncorrectFormat("RAM size cannot be less than 1. Natural number is expected.")
+    }
 
     /**
      * This loop checks to see if there are any references to nonexistent pages.
      * If there are invalid calls, they are ignored and a warning is displayed.
      */
+    val calls = lines[2].split(" ").map { it.toIntOrNull() }
     val sequenceOfCalls: MutableList<Int> = mutableListOf()
-    var ifTooBigCall = false
-    for (call in calls) {
-        if (call.toInt() <= processSize) {
-            sequenceOfCalls.add (call.toInt())
-        }
-        else {
-            if (!ifTooBigCall) {
-                println("There were invalid calls in the call sequence.\nThese calls will be ignored.\n")
-                ifTooBigCall = true
-            }
-        }
+    calls.filter { (it != null) && (it > 0) && (it < processSize) }.map {sequenceOfCalls.add(it!!)}
+
+    when (sequenceOfCalls.size) {
+        0 -> throw IncorrectFormat("Sequence of requests has not valid calls in line 3 in file $filename. Sequence of natural number is expected.")
+        in 1 until calls.size -> println("There were invalid calls in the call sequence. These calls will be ignored.")
     }
+
     return Pair(memorySize, sequenceOfCalls)
 }
 
@@ -93,9 +81,6 @@ fun fifoAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     val sequenceOfAnswers: MutableList<String> = mutableListOf()
     val occupiedMemory: Queue<FrameOfMemory> = LinkedList()
 
-    if (memorySize == 0) {
-        return sequenceOfAnswers
-    }
 
     for (desiredPage in sequenceOfCalls) {
         if (occupiedMemory.map { it.numberOfPage }.contains(desiredPage)) {
@@ -157,10 +142,6 @@ fun resettingAge(memory: MutableMap<Int, FrameOfMemory>, desiredPage: Int): Muta
 fun lruAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     val sequenceOfAnswers: MutableList<String> = mutableListOf()
     var occupiedMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
-
-    if (memorySize == 0) {
-        return sequenceOfAnswers
-    }
 
     for (desiredPage in sequenceOfCalls) {
         occupiedMemory = increasingAge(occupiedMemory)
@@ -242,10 +223,6 @@ fun optAlgorithm(memorySize: Int, sequenceOfCalls:List<Int>): List<String> {
     val sequenceOfAnswers: MutableList<String> = mutableListOf()
     var occupiedMemory: MutableMap<Int, FrameOfMemory> = mutableMapOf()
 
-    if (memorySize == 0) {
-        return sequenceOfAnswers
-    }
-
     for ((index, desiredPage) in sequenceOfCalls.withIndex()) {
         occupiedMemory = reductionOfTimeToCall(occupiedMemory)
 
@@ -314,11 +291,15 @@ fun outputOnDisplay(fifo: List<String>, lru: List<String>, opt: List<String>) {
  * This function implements the work of the program.
  */
 fun main(args: Array<String>) {
+    if (args.isEmpty()) {
+        println ("No files are listed!")
+    }
+
     val logFile = createLogFile()
     for (filename in args) {
         try {
-            val lines = readFile(filename)
-            val (memorySize, sequenceOfCalls) = dataProcessing(lines)
+            println("File $filename processing result:")
+            val (memorySize, sequenceOfCalls) = readFile(filename)
 
             val fifo = fifoAlgorithm(memorySize, sequenceOfCalls)
             val lru = lruAlgorithm(memorySize, sequenceOfCalls)
@@ -331,7 +312,7 @@ fun main(args: Array<String>) {
              * This block prints an error message to the screen and writes a description of the error to log.
              */
             logFile.appendText("$filename:$e\n")
-            println("Error occurred while executing the file $filename: see error description in log.")
+            println("$e")
         }
         println("\n")
     }
