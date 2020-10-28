@@ -1,7 +1,14 @@
 #!/bin/bash
 
-for file in $(find data -regex "example[0-9].txt")
+gradle jar
+
+for (( test = 0; test < 10; test++ ))
 do
-  java -jar build/libs/project_2.jar data/"$file"
-  cmp -s data/results/"$file" output.txt || exit 1
+java -jar build/libs/project_2.jar "data/example${test}.txt" output.txt
+diff -q "data/results/example${test}.txt" output.txt
+if [ $? -eq 1 ]
+then
+echo "test $test failed"
+exit $test
+fi
 done
