@@ -44,3 +44,16 @@ task integTest(type: Test){
 }
 
 check.dependsOn integTest
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'me.maria.VirtualMemoryKt' //package вещь
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory()? it: zipTree(it)
+        }
+    }
+}
