@@ -1,0 +1,13 @@
+File data/example8.txt processing result:
+There were invalid calls in the call sequence. These calls will be ignored.
+
+This is the result of the algorithm FIFO: [1*, 2*, 3*, +, 4*, 5*, 6*, 7*, 8*, 1, +, +, +, 2, 3]
+This is the result of the algorithm LRU: [1*, 2*, 3*, +, 4*, 5*, 6*, 7*, 8*, 2, +, +, +, 1, 4]
+This is the result of the algorithm OPT: [1*, 2*, 3*, +, 4*, 5*, 6*, 7*, 8*, 7, +, +, +, 3, 3]
+
+Algorithms sorted by the number of answers of the second type:
+FIFO: 11
+LRU: 11
+OPT: 11
+
+
